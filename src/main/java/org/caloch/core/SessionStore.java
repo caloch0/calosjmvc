@@ -58,7 +58,7 @@ public class SessionStore {
         void save(String key,Object data);
         Object get(String key);
         String verify(HttpExchange exchange);
-        SessionItem newSession();
+        SessionItem newSession(String sessionId);
     }
 
     static class SessionItem {
