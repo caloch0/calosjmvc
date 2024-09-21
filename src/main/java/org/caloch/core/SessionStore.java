@@ -1,6 +1,7 @@
 package org.caloch.core;
 
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpPrincipal;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,11 +25,11 @@ public class SessionStore {
         if (sessionId == null) {
             // Create a new session if no session ID is found
             sessionId = UUID.randomUUID().toString();
-            exchange.getPrincipal();
+            HttpPrincipal principal= exchange.getPrincipal();
             String s = "Session data for " + sessionId;
             sessions.put(sessionId, new SessionItem(new HashMap<>(), System.currentTimeMillis()));
             SessionItem sessionItem= sessions.get(sessionId);
-            sessionItem.getData().put(sessionId,s);
+            sessionItem.getData().put(sessionId,principal);
             response = "New session created: " + sessionId;
             exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
         } else {
