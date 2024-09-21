@@ -12,25 +12,31 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class SessionStore {
-    private final HttpExchange exchange;
     private final ConcurrentHashMap<String, SessionItem> sessions;
     private final ThreadLocal<String> currentSessionId=new ThreadLocal<>();
 
-    private SessionStore(HttpExchange exchange) throws IOException {
-        this.exchange = exchange;
+    private SessionStore() {
         this.sessions = new ConcurrentHashMap<>();
+    }
 
+    private static SessionStore instance = null;
+
+    public static SessionStore instance(HttpExchange exchange) throws IOException {
+        if (instance == null) instance = new SessionStore();
+        return instance;
+    }
+
+    public String verify(HttpExchange exchange) throws IOException {
         String response;
         String sessionId = getSessionId(exchange);
-
         if (sessionId == null) {
             // Create a new session if no session ID is found
             sessionId = UUID.randomUUID().toString();
-            HttpPrincipal principal= exchange.getPrincipal();
+            HttpPrincipal principal = exchange.getPrincipal();
             String s = "Session data for " + sessionId;
             sessions.put(sessionId, new SessionItem(new HashMap<>(), System.currentTimeMillis()));
-            SessionItem sessionItem= sessions.get(sessionId);
-            sessionItem.getData().put(sessionId,principal);
+            SessionItem sessionItem = sessions.get(sessionId);
+            sessionItem.getData().put(sessionId, principal);
             currentSessionId.set(sessionId);
             response = "New session created: " + sessionId;
             exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
@@ -43,14 +49,7 @@ public class SessionStore {
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
-
-    }
-
-    private static SessionStore instance = null;
-
-    public static SessionStore instance(HttpExchange exchange) throws IOException {
-        if (instance == null) instance = new SessionStore(exchange);
-        return instance;
+        return null;
     }
 
 
