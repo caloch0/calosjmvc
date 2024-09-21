@@ -21,7 +21,7 @@ public class SessionStore {
 
     private static SessionStore instance = null;
 
-    public static SessionStore instance(HttpExchange exchange) throws IOException {
+    public static SessionStore instance() throws IOException {
         if (instance == null) instance = new SessionStore();
         return instance;
     }
