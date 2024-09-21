@@ -9,6 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/*
+1. convert this class into a session store singleton
+2. when user logs in, when user authentication is successful, response with the sessionid cookie
+3. when user visits again, try to get the sessionid cookie from request, and try to find the session object from the session store
+4. every time user requests, check and set session lastUpdatedOn using timestamp, the session duration between two requests is set
+15 minutes here by default for now, or set to config
+ */
 public class JSessionHandler {
 
     // Map to store session IDs and their associated data
