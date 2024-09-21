@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionStore {
     private final HttpExchange exchange;
     private final ConcurrentHashMap<String, SessionItem> sessions;
+    private ThreadLocal<String> currentSessionId=new ThreadLocal<>();
 
     private SessionStore(HttpExchange exchange) throws IOException {
         this.exchange = exchange;
@@ -30,6 +31,7 @@ public class SessionStore {
             sessions.put(sessionId, new SessionItem(new HashMap<>(), System.currentTimeMillis()));
             SessionItem sessionItem= sessions.get(sessionId);
             sessionItem.getData().put(sessionId,principal);
+            currentSessionId.set(sessionId);
             response = "New session created: " + sessionId;
             exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
         } else {
