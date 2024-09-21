@@ -17,6 +17,11 @@ import java.util.UUID;
 15 minutes minor here by default for now, or set to config, user can set sessionItem Data i.e. sessionData
 
 SessionStore[sessionId,SessionItem],  sessionItem{Object Data, long lastVisited}
+how to test:
+1. user logins in to system, base controller, initialize sessionStore, create a sessionId and save in session store, set
+sessionStore principle to current user principle
+2. return response with encrypted sessionId cookie to user
+3. user logins again with sessionId cookie, in authentication handler, get sessionId data from sessionStore, recover principle
 
  */
 public class JSessionHandler {
