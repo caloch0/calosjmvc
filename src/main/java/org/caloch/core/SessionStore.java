@@ -57,6 +57,8 @@ public class SessionStore {
     interface ISessionStore{
         void save(String key,Object data);
         Object get(String key);
+        ISessionStore verify(HttpExchange exchange);
+        SessionItem newSession();
     }
 
     static class SessionItem {
