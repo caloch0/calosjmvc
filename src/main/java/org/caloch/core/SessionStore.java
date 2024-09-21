@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionStore {
     private final HttpExchange exchange;
     private final ConcurrentHashMap<String, SessionItem> sessions;
-    private ThreadLocal<String> currentSessionId=new ThreadLocal<>();
+    private final ThreadLocal<String> currentSessionId=new ThreadLocal<>();
 
     private SessionStore(HttpExchange exchange) throws IOException {
         this.exchange = exchange;
