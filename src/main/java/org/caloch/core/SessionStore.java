@@ -4,6 +4,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,7 +25,10 @@ public class SessionStore {
             // Create a new session if no session ID is found
             sessionId = UUID.randomUUID().toString();
             exchange.getPrincipal();
-            sessions.put(sessionId, new SessionItem("Session data for " + sessionId, System.currentTimeMillis()));
+            String s = "Session data for " + sessionId;
+            sessions.put(sessionId, new SessionItem(new HashMap<>(), System.currentTimeMillis()));
+            SessionItem sessionItem= sessions.get(sessionId);
+            sessionItem.getData().put(sessionId,s);
             response = "New session created: " + sessionId;
             exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
         } else {
@@ -63,12 +68,17 @@ public class SessionStore {
 
     static class SessionItem {
 
-        public SessionItem(Object data, long lastUpdatedOn) {
+        public SessionItem(HashMap<String,Object> data, long lastUpdatedOn) {
             this.data = data;
             this.lastUpdatedOn = lastUpdatedOn;
         }
 
-        public Object data;
+
+        public Map<String, Object> getData() {
+            return data;
+        }
+
+        public Map<String,Object> data;
         long lastUpdatedOn;
     }
 }
