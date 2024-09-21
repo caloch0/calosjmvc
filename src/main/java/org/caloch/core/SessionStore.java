@@ -62,6 +62,10 @@ public class SessionStore {
         return null;
     }
 
+    public Object get(String key) {
+        return sessions.get(currentSessionId.get()).getData().get(key);
+    }
+
     interface ISessionStore{
         void save(String key,Object data);
         Object get(String key);
