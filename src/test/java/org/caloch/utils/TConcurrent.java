@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 class TConcurrent {
     public static void main(String[] args) {
-        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap();
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         ThreadLocal<String> l=new ThreadLocal<>();
         Thread t1 = new Thread(new Runnable() {
             @Override
