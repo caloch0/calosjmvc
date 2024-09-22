@@ -21,7 +21,7 @@ public class SessionStore {
 
     private static SessionStore instance = null;
 
-    public static SessionStore instance() throws IOException {
+    public static SessionStore instance() {
         if (instance == null) instance = new SessionStore();
         return instance;
     }
@@ -63,6 +63,10 @@ public class SessionStore {
 
     public Object get(String key) {
         return sessions.get(currentSessionId.get()).getData().get(key);
+    }
+
+    public void save(String key, Object data){
+        sessions.get(currentSessionId.get()).getData().put(key,data);
     }
 
     interface ISessionStore{
