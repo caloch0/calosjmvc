@@ -13,6 +13,7 @@ class TConcurrent {
                     l.set("t1");
                     String name = Thread.currentThread().getName();
                     map.put(name,2);
+                    System.out.println(map.get("t3"));
                     Thread.sleep(1000);
                     System.out.println(name);
                     System.out.println(l.get());
