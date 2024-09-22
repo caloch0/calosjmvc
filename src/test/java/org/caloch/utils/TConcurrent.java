@@ -11,10 +11,10 @@ class TConcurrent {
             public void run() {
                 try {
                     l.set("t1");
-                    Thread.sleep(1000);
                     String name = Thread.currentThread().getName();
-                    System.out.println(name);
                     map.put(name,2);
+                    Thread.sleep(1000);
+                    System.out.println(name);
                     System.out.println(l.get());
                     System.out.println(map.get("t3"));
                 } catch (InterruptedException e) {
