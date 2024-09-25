@@ -36,6 +36,7 @@ public class SessionStore {
             if(LocalDateTime.now().minusMinutes(15).toInstant(ZoneOffset.UTC).isAfter(calendar.toInstant())){
                 throw new Exception("15 minutes passed since last visit");
             }
+            item.lastUpdatedOn=System.currentTimeMillis();
             return (HttpPrincipal) item.data.get(sessionId);
         }
         return null;
