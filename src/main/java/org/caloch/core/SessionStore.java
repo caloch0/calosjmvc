@@ -3,11 +3,10 @@ package org.caloch.core;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpPrincipal;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -26,29 +25,18 @@ public class SessionStore {
         return instance;
     }
 
-    public String verify(HttpExchange exchange) throws IOException {
-        String response;
+    public String verify(HttpExchange exchange) throws Exception {
         String sessionId = getSessionId(exchange);
-        if (sessionId == null) {
-            // Create a new session if no session ID is found
-            sessionId = UUID.randomUUID().toString();
-            HttpPrincipal principal = exchange.getPrincipal();
-            String s = "Session data for " + sessionId;
-            sessions.put(sessionId, new SessionItem(new HashMap<>(), System.currentTimeMillis()));
-            SessionItem sessionItem = sessions.get(sessionId);
-            sessionItem.getData().put(sessionId, principal);
+        if (!sessionId.isEmpty()) {
             currentSessionId.set(sessionId);
-            response = "New session created: " + sessionId;
-            exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
-        } else {
-            // Retrieve session data
-            response = "Session ID: " + sessionId + ", Data: " + sessions.get(sessionId);
+            SessionItem item=sessions.get(sessionId);
+            Date lastUpdatedOn =new Date(item.lastUpdatedOn);
+            Calendar calendar= Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            calendar.setTime(lastUpdatedOn);
+            if(LocalDateTime.now().minusMinutes(15).toInstant(ZoneOffset.UTC).isAfter(calendar.toInstant())){
+                throw new Exception("15 minutes passed since last visit");
+            }
         }
-
-        exchange.sendResponseHeaders(200, response.length());
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
         return null;
     }
 
@@ -66,7 +54,19 @@ public class SessionStore {
     }
 
     public void save(String key, Object data){
-        sessions.get(currentSessionId.get()).getData().put(key,data);
+        SessionItem item =sessions.get(currentSessionId.get());
+        item.getData().put(key, data);
+        item.lastUpdatedOn=System.currentTimeMillis();
+    }
+
+    public SessionItem newSession(String sessionId,HttpPrincipal principal){
+        sessions.put(sessionId, new SessionItem(new HashMap<>(), System.currentTimeMillis()));
+        SessionItem sessionItem = sessions.get(sessionId);
+        sessionItem.getData().put(sessionId, principal);
+        currentSessionId.set(sessionId);
+//        response = "New session created: " + sessionId;
+//        exchange.getResponseHeaders().add("Set-Cookie", "sessionId=" + sessionId);
+        return sessionItem;
     }
 
     interface ISessionStore{
