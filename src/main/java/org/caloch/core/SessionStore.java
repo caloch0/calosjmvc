@@ -25,7 +25,7 @@ public class SessionStore {
         return instance;
     }
 
-    public String verify(HttpExchange exchange) throws Exception {
+    public HttpPrincipal verify(HttpExchange exchange) throws Exception {
         String sessionId = getSessionId(exchange);
         if (!sessionId.isEmpty()) {
             currentSessionId.set(sessionId);
@@ -36,6 +36,7 @@ public class SessionStore {
             if(LocalDateTime.now().minusMinutes(15).toInstant(ZoneOffset.UTC).isAfter(calendar.toInstant())){
                 throw new Exception("15 minutes passed since last visit");
             }
+            return (HttpPrincipal) item.data.get(sessionId);
         }
         return null;
     }
