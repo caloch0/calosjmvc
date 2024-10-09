@@ -80,13 +80,13 @@ public class ObjectParser {
         while ((cur = reader.read()) != -1) {
             if (cur == ']') break;
             if (cur == ',') cur = reader.read();
-            ret.add(parseValue1st(reader, cur));
+            ret.add(parseValue(reader, cur));
         }
         return ret;
     }
 
 
-    public static Object parseValue1st(Reader reader, int cur) throws IOException {
+    public static Object parseValue(Reader reader, int cur) throws IOException {
         if (cur == '[') return parseArray(reader, cur);
         if(cur=='{')return parseObj(reader,cur);
         if (cur == 't' || cur == 'f') return parseBoolean(reader, (char)cur);
@@ -106,7 +106,7 @@ public class ObjectParser {
             }
             String key = parseString(sr);
             sr.read();
-            Object value = parseValue1st(sr, sr.read());
+            Object value = parseValue(sr, sr.read());
             ret.put(key, value);
         }
         return ret;
