@@ -1,4 +1,4 @@
-# CaloJMVC
+# CalochJMVC
 An MVC project in java, my custom MVC project for use
 
 
